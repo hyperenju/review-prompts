@@ -49,6 +49,23 @@ The agent has an internal definition of what "reviewing" code means, so if we
 call it a review, it will generally follow that internal definition.  We can
 nudge it slightly, but calling it a deep dive regression analysis leads to
 better compliance with the prompts.
+=======
+Single-patch review with Codex:
+
+```
+kernel/scripts/review_one.sh --cli codex <sha>
+```
+
+Specify the kernel tree explicitly:
+
+```
+kernel/scripts/review_one.sh --cli codex --linux /path/to/linux <sha>
+```
+
+Claude has a internal definition of what "reviewing" code means, so if we call
+it a review, it will generally follow that internal definition.  We can nudge it
+slightly, but calling it a deep dive regression analysis leads to better
+compliance with the prompts.
 
 You can also feed it incremental diffs, or use debugging.md with an oops
 or stack trace.
@@ -58,7 +75,8 @@ for integration instructions.
 
 ## Kernel patch review helper scripts
 See [scripts/scripts.md](scripts/scripts.md) for description of how to run
-a review of multiple commits in parallel.
+a review of multiple commits in parallel. The scripts default to Claude, but
+`review_one.sh` and `agent_one.sh` support Codex via `--cli codex`.
 
 ## Output
 

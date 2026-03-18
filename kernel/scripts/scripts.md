@@ -1,6 +1,6 @@
 # Review Scripts Documentation
 
-These scripts automate the process of reviewing a series of git commits using Claude.
+These scripts automate the process of reviewing a series of git commits using Claude by default (Codex and Copilot are supported in `review_one.sh` via `--cli`).
 
 ## Scripts Overview
 
@@ -145,7 +145,7 @@ This script is designed to be called by the context-analyzer agent (see `kernel/
 
 ## review_one.sh
 
-Reviews a single git commit by setting up a worktree and running Claude's review.
+Reviews a single git commit by setting up a worktree and running the selected CLI review.
 
 ### Usage
 
@@ -161,18 +161,23 @@ review_one.sh [options] <sha>
 | `--prompt <file>` | Path to the review prompt file | `<script_dir>/../review-core.md` |
 | `--series <sha>` | SHA of the last commit in the series (optional) | - |
 | `--working-dir <dir>` | Directory where worktrees are created | Current directory or `$WORKING_DIR` |
-| `--model <model>` | Claude model to use | `sonnet` or `$CLAUDE_MODEL` |
+| `--model <model>` | Model to use (CLI-dependent) | `sonnet` or `$CLAUDE_MODEL` |
+| `--cli <name>` | CLI backend | `claude` (also `copilot`, `codex`) |
 
 ### What it does
 
 1. Creates a git worktree at `linux.<sha>` for the specified commit
 2. If the base linux directory has `.semcode.db`, hard-links it into the worktree and configures MCP
-3. Runs Claude with the review prompt
+3. Runs the selected CLI with the review prompt
 4. Outputs results to:
-   - `review.json` - Raw Claude output (stream-json format)
-   - `review.md` - Parsed markdown review
+   - `review.json` - Raw Claude output (stream-json format, Claude only)
+   - `review.md` - Parsed markdown review (Claude) or direct Codex output
    - `review.duration.txt` - Elapsed time
-5. Retries up to 5 times if Claude exits without output
+5. Retries up to 5 times if the CLI exits without output
+
+### Codex note
+
+`--cli codex` uses `codex exec` and writes the final response to `review.md`. Semcode MCP is not auto-configured; add it via `codex mcp add semcode -- semcode-mcp` if you want tool access.
 
 ### Directory Structure Assumptions
 

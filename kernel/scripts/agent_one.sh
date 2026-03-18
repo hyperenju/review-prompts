@@ -19,7 +19,7 @@ usage() {
     echo "  --working-dir: working directory (default: current directory or WORKING_DIR env)"
     echo "  --model: Claude model to use (default: sonnet or CLAUDE_MODEL env)"
     echo "  --append: string to append to the prompt (e.g., for enabling pedantic mode)"
-    echo "  --cli: which CLI to use (default: claude)"
+    echo "  --cli: which CLI to use (default: claude; options: claude, copilot, codex)"
     echo "  --help: show this help message"
 }
 
@@ -40,6 +40,10 @@ REVIEW_PROMPT=""
 BASE_LINUX=""
 APPEND_STRING=""
 CLI="claude"
+CLI_CMD=""
+MODEL_ARG=""
+PROMPT_PREFIX=""
+PROMPT_SUFFIX=""
 while [[ $# -gt 1 ]]; do
     case "$1" in
         --help)
@@ -184,6 +188,10 @@ fi
 MCP_ARGS=""
 
 set_claude_opts() {
+	CLI_CMD="claude"
+	PROMPT_PREFIX="-p '$PROMPT'"
+	PROMPT_SUFFIX=""
+
 	if [ -v HAVE_MCP ]; then
 		MCP_JSON='{"mcpServers":{"semcode":{"command":"semcode-mcp"}}}'
 
@@ -213,6 +221,7 @@ set_claude_opts() {
 	if [ -z "$CLAUDE_MODEL" ]; then
 		CLAUDE_MODEL="sonnet"
 	fi
+	MODEL_ARG="--model $CLAUDE_MODEL"
 
 	JSONPROG="$SCRIPT_DIR/claude-json.py"
 	OUTFILE="review.json"
@@ -226,6 +235,10 @@ set_claude_opts() {
 }
 
 set_copilot_opts() {
+	CLI_CMD="copilot"
+	PROMPT_PREFIX="-p '$PROMPT'"
+	PROMPT_SUFFIX=""
+
 	if [ -v HAVE_MCP ]; then
 		MCP_JSON='{"mcpServers":{"semcode":{"command":"semcode-mcp","args":[],"tools":["*"]}}}'
 
@@ -237,6 +250,7 @@ set_copilot_opts() {
 	if [ -z "$CLAUDE_MODEL" ]; then
 		CLAUDE_MODEL="claude-opus-4.5"
 	fi
+	MODEL_ARG="--model $CLAUDE_MODEL"
 
 	CLI_OPTS="--log-level all"
 	CLI_OPTS+=" --add-dir /tmp"
@@ -249,12 +263,34 @@ set_copilot_opts() {
 	CLI_OUT=" | tee $OUTFILE"
 }
 
+set_codex_opts() {
+	CLI_CMD="codex exec"
+	PROMPT_PREFIX=""
+	PROMPT_SUFFIX="'$PROMPT'"
+
+	if [ -n "$CLAUDE_MODEL" ]; then
+		MODEL_ARG="--model $CLAUDE_MODEL"
+	fi
+
+	OUTFILE="review.md"
+	CLI_OPTS="--output-last-message $OUTFILE"
+	CLI_OPTS+=" --full-auto"
+	CLI_OPTS+=" --add-dir /tmp"
+	CLI_OPTS+=" --add-dir $WORKING_DIR"
+	CLI_OPTS+=" --add-dir $SCRIPT_DIR/.."
+
+	CLI_OUT=""
+}
+
 case "$CLI" in
     claude)
 	    set_claude_opts
 	    ;;
     copilot)
 	    set_copilot_opts
+	    ;;
+    codex)
+	    set_codex_opts
 	    ;;
     *)
 	    echo "Error: Unknown CLI: $CLI" >&2
@@ -263,11 +299,12 @@ case "$CLI" in
 esac
 
 # Build the full command
-FULL_CMD="$CLI"
-FULL_CMD+=" -p '$PROMPT'"
+FULL_CMD="$CLI_CMD"
+FULL_CMD+=" $PROMPT_PREFIX"
 FULL_CMD+=" $MCP_ARGS"
-FULL_CMD+=" --model $CLAUDE_MODEL"
+FULL_CMD+=" $MODEL_ARG"
 FULL_CMD+=" $CLI_OPTS"
+FULL_CMD+=" $PROMPT_SUFFIX"
 FULL_CMD+=" $CLI_OUT"
 #echo "Would run: $FULL_CMD"
 
