@@ -40,6 +40,18 @@ Put these prompts somewhere, and then tell claude to use them:
 claude> Using the prompt ../review-prompts/review-core.md run a deep dive regression analysis of the top commit
 ```
 
+Single-patch review with Codex:
+
+```
+kernel/scripts/review_one.sh --cli codex <sha>
+```
+
+Specify the kernel tree explicitly:
+
+```
+kernel/scripts/review_one.sh --cli codex --linux /path/to/linux <sha>
+```
+
 Claude has a internal definition of what "reviewing" code means, so if we call
 it a review, it will generally follow that internal definition.  We can nudge it
 slightly, but calling it a deep dive regression analysis leads to better
@@ -53,7 +65,8 @@ for integration instructions.
 
 ## Kernel patch review helper scripts
 See [scripts/scripts.md](scripts/scripts.md) for description of how to run
-a review of multiple commits in parallel.
+a review of multiple commits in parallel. The scripts default to Claude, but
+`review_one.sh` and `agent_one.sh` support Codex via `--cli codex`.
 
 ## Output
 
@@ -138,4 +151,3 @@ help it find new classes of bugs are very much appreciated.
 The prompts have been developed against claude, but gemini also works well.
 These should be generic enough that other agents work too, but please send patches
 if we can improve performance with any of the other agents.
-
