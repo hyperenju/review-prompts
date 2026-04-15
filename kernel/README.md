@@ -62,6 +62,18 @@ Specify the kernel tree explicitly:
 kernel/scripts/review_one.sh --cli codex --linux /path/to/linux <sha>
 ```
 
+Single-patch review with Codex:
+
+```
+kernel/scripts/review_one.sh --cli codex <sha>
+```
+
+Specify the kernel tree explicitly:
+
+```
+kernel/scripts/review_one.sh --cli codex --linux /path/to/linux <sha>
+```
+
 Claude has a internal definition of what "reviewing" code means, so if we call
 it a review, it will generally follow that internal definition.  We can nudge it
 slightly, but calling it a deep dive regression analysis leads to better
