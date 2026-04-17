@@ -62,6 +62,14 @@ Specify the kernel tree explicitly:
 kernel/scripts/review_one.sh --cli codex --linux /path/to/linux <sha>
 ```
 
+If you run this often from `zsh`, source the helper function:
+
+```zsh
+source /path/to/review-prompts/kernel/scripts/review_one.zsh
+kreview1 <sha>
+kreview1 /path/to/linux <sha>
+```
+
 Single-patch review with Codex:
 
 ```

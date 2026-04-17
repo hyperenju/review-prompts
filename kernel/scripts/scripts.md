@@ -179,6 +179,16 @@ review_one.sh [options] <sha>
 
 `--cli codex` uses `codex exec` and writes the final response to `review.md`. Semcode MCP is not auto-configured; add it via `codex mcp add semcode -- semcode-mcp` if you want tool access.
 
+### zsh helper
+
+If you always run Codex reviews, you can source `kernel/scripts/review_one.zsh`
+and use:
+
+```zsh
+kreview1 <sha>
+kreview1 /path/to/linux <sha>
+```
+
 ### Directory Structure Assumptions
 
 `review_one.sh` uses its install location to find related files:
