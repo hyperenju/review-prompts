@@ -23,6 +23,22 @@ usage() {
     echo "  --help: show this help message"
 }
 
+require_codex_01160() {
+    local version raw
+
+    if ! raw=$(codex --version 2>/dev/null); then
+        echo "Error: failed to run 'codex --version'" >&2
+        exit 1
+    fi
+
+    version=$(printf '%s\n' "$raw" | awk '{print $NF}')
+    if [ "$version" != "0.116.0" ]; then
+        echo "Error: Codex CLI $version detected, but exec-mode MCP reviews are pinned to codex-cli 0.116.0." >&2
+        echo "See openai/codex#16685. Please downgrade Codex before using --cli codex." >&2
+        exit 1
+    fi
+}
+
 if [ $# -lt 1 ]; then
     usage
     exit 1
@@ -265,6 +281,8 @@ set_copilot_opts() {
 
 set_codex_opts() {
 	CLI_CMD="codex exec"
+	require_codex_01160
+
 	PROMPT_PREFIX=""
 	PROMPT_SUFFIX="'$PROMPT'"
 

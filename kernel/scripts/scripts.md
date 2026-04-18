@@ -177,7 +177,7 @@ review_one.sh [options] <sha>
 
 ### Codex note
 
-`--cli codex` uses `codex exec` and writes the final response to `review.md`. Semcode MCP is not auto-configured; add it via `codex mcp add semcode -- semcode-mcp` if you want tool access.
+`--cli codex` is pinned to `codex-cli 0.116.0`. Newer Codex releases currently regress exec-mode MCP tool calls and can fail with `user cancelled MCP tool call` / `request_user_input is not supported in exec mode` (see `openai/codex#16685`). `--cli codex` writes the final response to `review.md`. Semcode MCP is not auto-configured; add it via `codex mcp add semcode -- semcode-mcp` if you want tool access.
 
 ### zsh helper
 

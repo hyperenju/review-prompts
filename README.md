@@ -74,6 +74,10 @@ review-prompts/
 These prompts work best with [semcode](https://github.com/facebookexperimental/semcode)
 for fast code navigation and semantic search.
 
+If you use the kernel helper scripts with `--cli codex`, pin Codex to
+`codex-cli 0.116.0` for now. Newer Codex releases have a known exec-mode
+MCP regression that breaks semcode tool calls (`openai/codex#16685`).
+
 ## License
 
 See [LICENSE](LICENSE) for license information.

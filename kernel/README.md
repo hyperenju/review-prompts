@@ -56,6 +56,10 @@ Single-patch review with Codex:
 kernel/scripts/review_one.sh --cli codex <sha>
 ```
 
+For now, pin Codex to `codex-cli 0.116.0` if you want semcode MCP in
+`codex exec`. Newer versions hit the known exec-mode MCP regression
+tracked in `openai/codex#16685`.
+
 Specify the kernel tree explicitly:
 
 ```
